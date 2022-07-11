@@ -40,10 +40,23 @@ func main() {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 					queue, err := queueService.GetQueue(message.Text)
+					if err != nil {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
+							log.Print(err)
+							return
+						}
+					}
 					reply := fmt.Sprintf("คุณ %v เหลืออีก %v คิว รอสักครู่นะครับ", queue.Name, queue.QueueAmount)
+					if queue.QueueAmount == 0 {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ถึงคิวของคุณแล้ว รีบมาด่วนเลยครับ")).Do(); err != nil {
+							log.Print(err)
+							return
+						}
+					}
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(reply)).Do(); err != nil {
 						log.Print(err)
 					}
+
 					// if message.Text == "กรวิชญ์" {
 					// 	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("คนหล่อเท่")).Do(); err != nil {
 					// 		log.Print(err)
