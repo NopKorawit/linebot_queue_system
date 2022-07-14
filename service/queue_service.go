@@ -39,4 +39,12 @@ func (s queueService) GetQueue(code string) (*model.QueueResponse, error) {
 	return &qReponse, nil
 }
 
-// func
+// func pushmessage (userID string,message string){
+// 	bot, err := linebot.New(<channel secret>, <channel token>)
+// 	if err != nil {
+// 	...
+// 	}
+// 	if _, err := bot.Multicast(userIDs, linebot.NewTextMessage("hello")).Do(); err != nil {
+// 	...
+// 	}
+// }

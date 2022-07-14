@@ -39,8 +39,12 @@ func main() {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
+					userIDs := "U75d559eb17b924479b63d01491314f48"
 					queue, err := queueService.GetQueue(message.Text)
 					if err != nil {
+						if _, err := bot.PushMessage(userIDs, linebot.NewTextMessage("hello")).Do(); err != nil {
+							log.Print(err)
+						}
 						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
 							log.Print(err)
 							return
@@ -200,7 +204,7 @@ func main() {
 						log.Println(err)
 					}
 					// New Flex Message
-					flexMessage := linebot.NewFlexMessage("Queue", flexContainer)
+					flexMessage := linebot.NewFlexMessage(queue.UserCode, flexContainer)
 					// Reply Message
 					_, err = bot.ReplyMessage(event.ReplyToken, flexMessage).Do()
 					if err != nil {
