@@ -7,6 +7,7 @@ import (
 	"line/service"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 	"github.com/line/line-bot-sdk-go/v7/linebot/httphandler"
@@ -226,7 +227,16 @@ func main() {
 	// if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 
 	//ngrok http localhost:5500
-	if err := http.ListenAndServe(":5500", nil); err != nil {
+	if err := http.ListenAndServe(getPort(), nil); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getPort() string {
+	var port = os.Getenv("PORT") // ----> (A)
+	if port == "" {
+		port = "5500"
+		fmt.Println("No Port In Heroku" + port)
+	}
+	return ":" + port // ----> (B)
 }
