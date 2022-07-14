@@ -38,3 +38,5 @@ func (s queueService) GetQueue(code string) (*model.QueueResponse, error) {
 	fmt.Println(qReponse)
 	return &qReponse, nil
 }
+
+// func

@@ -46,21 +46,167 @@ func main() {
 							return
 						}
 					}
-					reply := fmt.Sprintf("คุณ %v เหลืออีก %v คิว รอสักครู่นะครับ", queue.Name, queue.QueueAmount)
-					if queue.QueueAmount == 0 {
-						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ถึงคิวของคุณแล้ว รีบมาด่วนเลยครับ")).Do(); err != nil {
-							log.Print(err)
-							return
-						}
+					var wait string
+					if queue.QueueAmount == 1 {
+						wait = "Waiting a queue"
+					} else if queue.QueueAmount > 1 {
+						wait = fmt.Sprintf("Waiting %v queues", queue.QueueAmount)
+					} else if queue.QueueAmount == 0 {
+						wait = "It's your turn"
 					}
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(reply)).Do(); err != nil {
+					flex := fmt.Sprintf(`{
+						"type": "bubble",
+						"size": "kilo",
+						"direction": "ltr",
+						"hero": {
+						  "type": "image",
+						  "url": "https://pbs.twimg.com/media/DYY92oBVwAAJKvb.jpg",
+						  "size": "full",
+						  "aspectRatio": "25:13",
+						  "aspectMode": "cover",
+						  "position": "relative"
+						},
+						"body": {
+						  "type": "box",
+						  "layout": "vertical",
+						  "spacing": "md",
+						  "contents": [
+							{
+							  "type": "text",
+							  "text": "%v",
+							  "weight": "bold",
+							  "size": "xl",
+							  "gravity": "center",
+							  "margin": "lg",
+							  "wrap": true,
+							  "contents": []
+							},
+							{
+							  "type": "box",
+							  "layout": "vertical",
+							  "spacing": "sm",
+							  "margin": "lg",
+							  "contents": [
+								{
+								  "type": "box",
+								  "layout": "baseline",
+								  "spacing": "sm",
+								  "margin": "xs",
+								  "contents": [
+									{
+									  "type": "text",
+									  "text": "Name",
+									  "size": "sm",
+									  "color": "#AAAAAA",
+									  "flex": 2,
+									  "contents": []
+									},
+									{
+									  "type": "text",
+									  "text": "%v",
+									  "size": "sm",
+									  "color": "#666666",
+									  "flex": 4,
+									  "wrap": true,
+									  "contents": []
+									}
+								  ]
+								},
+								{
+								  "type": "box",
+								  "layout": "baseline",
+								  "spacing": "sm",
+								  "margin": "xs",
+								  "contents": [
+									{
+									  "type": "text",
+									  "text": "Date",
+									  "size": "sm",
+									  "color": "#AAAAAA",
+									  "flex": 2,
+									  "contents": []
+									},
+									{
+									  "type": "text",
+									  "text": "%v",
+									  "size": "sm",
+									  "color": "#666666",
+									  "flex": 4,
+									  "wrap": true,
+									  "contents": []
+									}
+								  ]
+								}
+							  ]
+							},
+							{
+							  "type": "box",
+							  "layout": "baseline",
+							  "spacing": "sm",
+							  "margin": "xs",
+							  "contents": [
+								{
+								  "type": "text",
+								  "text": "Queue",
+								  "size": "sm",
+								  "color": "#AAAAAA",
+								  "flex": 2,
+								  "contents": []
+								},
+								{
+								  "type": "text",
+								  "text": "%v",
+								  "size": "sm",
+								  "color": "#666666",
+								  "flex": 4,
+								  "wrap": true,
+								  "contents": []
+								}
+							  ]
+							},
+							{
+							  "type": "box",
+							  "layout": "vertical",
+							  "margin": "lg",
+							  "contents": [
+								{
+								  "type": "spacer",
+								  "size": "xs"
+								},
+								{
+								  "type": "image",
+								  "url": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=%v",
+								  "size": "md",
+								  "aspectMode": "cover"
+								},
+								{
+								  "type": "text",
+								  "text": "You can enter the restaurant by using this code instead of a ticket",
+								  "size": "xxs",
+								  "color": "#AAAAAA",
+								  "margin": "xxl",
+								  "wrap": true,
+								  "contents": []
+								}
+							  ]
+							}
+						  ]
+						}
+					  }`, queue.UserCode, queue.Name, queue.Date.Format("Monday 2, 15:04:05"), wait, queue.UserCode)
+
+					// Unmarshal JSON
+					flexContainer, err := linebot.UnmarshalFlexMessageJSON([]byte(flex))
+					if err != nil {
+						log.Println(err)
+					}
+					// New Flex Message
+					flexMessage := linebot.NewFlexMessage("Queue", flexContainer)
+					// Reply Message
+					_, err = bot.ReplyMessage(event.ReplyToken, flexMessage).Do()
+					if err != nil {
 						log.Print(err)
 					}
 
-					// if message.Text == "กรวิชญ์" {
-					// 	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("คนหล่อเท่")).Do(); err != nil {
-					// 		log.Print(err)
-					// 	}
 					// } else {
 					// 	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
 					// 		log.Print(err)
