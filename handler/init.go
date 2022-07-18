@@ -3,10 +3,12 @@ package handler
 import (
 	"fmt"
 	"line/model"
+	"log"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/spf13/viper"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
@@ -36,6 +38,17 @@ func ConnectDatabase() (db *gorm.DB) {
 	//auto migration
 	database.AutoMigrate(&model.QueueModel{})
 	return database
+}
+
+func GetBot() (bot *linebot.Client) {
+	bot, err := linebot.New(
+		os.Getenv("CHANNEL_SECRET"),
+		os.Getenv("CHANNEL_TOKEN"),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return bot
 }
 
 // func ConnectDatabase() (db *gorm.DB) {
