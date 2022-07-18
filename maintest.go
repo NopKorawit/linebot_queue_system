@@ -15,7 +15,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func main() {
+func main1() {
 	handler.InitAll()
 	//connect to database + auto migrate
 	db := handler.ConnectDatabase()

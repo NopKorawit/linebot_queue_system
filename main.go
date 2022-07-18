@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main1() {
+func main() {
 	handler.InitAll()
 	//connect to database + auto migrate
 	db := handler.ConnectDatabase()
