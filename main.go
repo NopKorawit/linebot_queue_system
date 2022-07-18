@@ -22,10 +22,12 @@ func main() {
 	route := gin.Default()
 	route.Use(cors.Default())
 
-	//Routes
-	route.GET("/", queueHandler.Hello)
-	route.POST("/callback", queueHandler.Callback)
-
+	q := route.Group("/api/v1/queue")
+	{
+		//Routes
+		q.GET("/", queueHandler.Hello)
+		q.POST("/callback", queueHandler.Callback)
+	}
 	//Run Server
 	route.Run()
 }
