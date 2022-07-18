@@ -1,1 +1,1 @@
-web: linebot_queue_system
+web: bin/linebot_queue_system
