@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"line/model"
 	"log"
 	"strings"
 	"time"
@@ -32,7 +31,7 @@ func ConnectDatabase() (db *gorm.DB) {
 		panic("Failed to connect to database!")
 	}
 	//auto migration
-	database.AutoMigrate(&model.QueueModel{})
+	// database.AutoMigrate(&model.QueueModel{})
 	return database
 }
 

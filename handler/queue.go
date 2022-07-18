@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"fmt"
 	"line/service"
 	"log"
@@ -31,6 +30,7 @@ func (h queueHandler) Hello(c *gin.Context) {
 func (h queueHandler) Callback(c *gin.Context) {
 	bot := GetBot()
 	events, err := bot.ParseRequest(c.Request)
+	fmt.Println(err)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			c.Writer.WriteHeader(400)
@@ -44,13 +44,6 @@ func (h queueHandler) Callback(c *gin.Context) {
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
 				userIDs := "U75d559eb17b924479b63d01491314f48"
-				queue, err := h.qService.GetQueue(message.Text)
-				if err == errors.New("record not found") {
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
-						log.Print(err)
-						return
-					}
-				}
 				if message.Text == "golf" {
 					if _, err := bot.PushMessage(userIDs, linebot.NewTextMessage("มีคนอยากเซ็ทหย่อสูดต่อซูดผ่อซีหม่อสองห่อใส่ไข่กับคุณ")).Do(); err != nil {
 						log.Print(err)
@@ -59,11 +52,21 @@ func (h queueHandler) Callback(c *gin.Context) {
 						log.Print(err)
 						return
 					}
+				}
+				queue, err := h.qService.GetQueue(message.Text)
+				fmt.Println(err)
+				if err.Error() == "repository error" {
+					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
+						log.Print(err)
+						return
+					}
+					return
 				} else if err != nil {
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ระบบผิดพลาด")).Do(); err != nil {
 						log.Print(err)
 						return
 					}
+					return
 				}
 				var wait string
 				if queue.QueueAmount == 1 {
@@ -72,6 +75,9 @@ func (h queueHandler) Callback(c *gin.Context) {
 					wait = fmt.Sprintf("Waiting %v queues", queue.QueueAmount)
 				} else if queue.QueueAmount == 0 {
 					wait = "It's your turn"
+				}
+				if queue.Name == "" {
+					queue.Name = "ไม่ระบุชื่อ"
 				}
 				flex := fmt.Sprintf(`{
 					"type": "bubble",
@@ -194,7 +200,7 @@ func (h queueHandler) Callback(c *gin.Context) {
 							},
 							{
 							  "type": "image",
-							  "url": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=%v",
+							  "url": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=%s",
 							  "size": "md",
 							  "aspectMode": "cover"
 							},
