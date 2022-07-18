@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"line/handler"
 	"line/repository"
@@ -42,11 +43,22 @@ func main() {
 				case *linebot.TextMessage:
 					userIDs := "U75d559eb17b924479b63d01491314f48"
 					queue, err := queueService.GetQueue(message.Text)
-					if err != nil {
-						if _, err := bot.PushMessage(userIDs, linebot.NewTextMessage("hello")).Do(); err != nil {
+					if err == errors.New("record not found") {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
+							log.Print(err)
+							return
+						}
+					}
+					if message.Text == "golf" {
+						if _, err := bot.PushMessage(userIDs, linebot.NewTextMessage("มีคนอยากเซ็ทหย่อสูดต่อซูดผ่อซีหม่อสองห่อใส่ไข่กับคุณ")).Do(); err != nil {
 							log.Print(err)
 						}
-						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ส่งข้อความให้กอล์ฟแล้ว")).Do(); err != nil {
+							log.Print(err)
+							return
+						}
+					} else if err != nil {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ระบบผิดพลาด")).Do(); err != nil {
 							log.Print(err)
 							return
 						}
@@ -236,7 +248,7 @@ func getPort() string {
 	var port = os.Getenv("PORT") // ----> (A)
 	if port == "" {
 		port = "5500"
-		fmt.Println("No Port In Heroku" + port)
+		fmt.Println("No Port In Heroku\nUse Port :" + port)
 	}
 	return ":" + port // ----> (B)
 }
