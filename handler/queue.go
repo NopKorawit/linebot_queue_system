@@ -55,19 +55,22 @@ func (h queueHandler) Callback(c *gin.Context) {
 				}
 				queue, err := h.qService.GetQueue(message.Text)
 				fmt.Println(err)
-				if err.Error() == "repository error" {
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
-						log.Print(err)
+				if err != nil {
+					if err.Error() == "repository error" {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ไม่พบเลขคิวที่คุณค้นหาหรืออาจเลยคิวของคุณมาแล้ว")).Do(); err != nil {
+							log.Print(err)
+							return
+						}
+						return
+					} else {
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ระบบผิดพลาด")).Do(); err != nil {
+							log.Print(err)
+							return
+						}
 						return
 					}
-					return
-				} else if err != nil {
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ระบบผิดพลาด")).Do(); err != nil {
-						log.Print(err)
-						return
-					}
-					return
 				}
+
 				var wait string
 				if queue.QueueAmount == 1 {
 					wait = "Waiting a queue"
