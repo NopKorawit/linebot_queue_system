@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"line/model"
 	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -39,8 +38,8 @@ func ConnectDatabase() (db *gorm.DB) {
 
 func GetBot() (bot *linebot.Client) {
 	bot, err := linebot.New(
-		os.Getenv("CHANNEL_SECRET"),
-		os.Getenv("CHANNEL_TOKEN"),
+		viper.GetString("line.CHANNEL_SECRET"),
+		viper.GetString("line.CHANNEL_TOKEN"),
 	)
 	if err != nil {
 		log.Fatal(err)
