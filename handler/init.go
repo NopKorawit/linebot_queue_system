@@ -19,11 +19,11 @@ func ConnectDatabase() (db *gorm.DB) {
 
 	//Set Data source name
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?&parseTime=True&loc=Local",
-		viper.GetString("db2.user"),
-		viper.GetString("db2.pass"),
-		viper.GetString("db2.host"),
-		viper.GetString("db2.port"),
-		viper.GetString("db2.database"),
+		viper.GetString("db.user"),
+		viper.GetString("db.pass"),
+		viper.GetString("db.host"),
+		viper.GetString("db.port"),
+		viper.GetString("db.database"),
 	)
 	dial := mysql.Open(dsn)
 
