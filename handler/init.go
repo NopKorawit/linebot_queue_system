@@ -10,25 +10,22 @@ import (
 
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/spf13/viper"
-	"gorm.io/driver/sqlserver"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 func ConnectDatabase() (db *gorm.DB) {
-	var server = os.Getenv("db_server")         // ----> (A)
-	var driver = os.Getenv("db_driver")         // ----> (A)
-	var databasename = os.Getenv("db_database") // ----> (A)
 
-	dsn := fmt.Sprintf("server=%v\\%v;Database=%v;praseTime=true", server, driver, databasename)
-	if server == "" {
-		dsn = fmt.Sprintf("server=%v\\%v;Database=%v;praseTime=true",
-			viper.GetString("db.server"),
-			viper.GetString("db.driver"),
-			viper.GetString("db.database"),
-		)
-	}
-	dial := sqlserver.Open(dsn)
+	//Set Data source name
+	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?&parseTime=True&loc=Local",
+		viper.GetString("db2.user"),
+		viper.GetString("db2.pass"),
+		viper.GetString("db2.host"),
+		viper.GetString("db2.port"),
+		viper.GetString("db2.database"),
+	)
+	dial := mysql.Open(dsn)
 
 	database, err := gorm.Open(dial, &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
 
