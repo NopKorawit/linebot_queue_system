@@ -13,8 +13,6 @@ func main() {
 	handler.InitAll()
 	//connect to database + auto migrate
 	db := handler.ConnectDatabase()
-
-	//Use Mock Data Repository to test
 	// queueRepo := repository.NewQueueRepositoryMock2()
 
 	queueRepo := repository.NewQueueRepositoryDB(db)
