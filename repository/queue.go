@@ -10,4 +10,5 @@ type QueueRepository interface {
 	// GetQueuesByName(name string, types string) (*model.QueueModel, error)
 	GetQueuesByCode(Code string) (*model.QueueModel, error)
 	GetCurrentQueue(types string) (*model.QueueModel, error)
+	DeleteQueuebyUID(UserID string) (*model.QueueModel, error)
 }

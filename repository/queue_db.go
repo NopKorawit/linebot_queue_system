@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"line/model"
+	"log"
 	"strconv"
 	"strings"
 
@@ -65,4 +66,18 @@ func (r queueRepositoryDB) GetCurrentQueue(types string) (*model.QueueModel, err
 		return nil, errors.New("current Code not found")
 	}
 	return &currentqueue, nil
+}
+
+func (r queueRepositoryDB) DeleteQueuebyUID(UserID string) (*model.QueueModel, error) {
+	queue := model.QueueModel{}
+	result := r.db.Order("Date").Where("user_id = ?", UserID).Find(&queue)
+	log.Println(&queue)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("current Code not found")
+	}
+	r.db.Where("user_id", UserID).Delete(&queue)
+	return &queue, nil
 }

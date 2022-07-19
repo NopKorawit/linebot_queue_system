@@ -40,10 +40,18 @@ func (h queueHandler) Callback(c *gin.Context) {
 		return
 	}
 	for _, event := range events {
+		fmt.Println(event.Source.UserID)
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
 				userIDs := "U75d559eb17b924479b63d01491314f48"
+				if message.Text == "ยกเลิกคิว" {
+					h.qService.DeleteQueuebyUID(event.Source.UserID)
+					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("ยกเลิกคิวเรียบร้อยแล้วครับ")).Do(); err != nil {
+						log.Print(err)
+					}
+					return
+				}
 				if message.Text == "golf" {
 					if _, err := bot.PushMessage(userIDs, linebot.NewTextMessage("มีคนอยากเซ็ทหย่อสูดต่อซูดผ่อซีหม่อสองห่อใส่ไข่กับคุณ")).Do(); err != nil {
 						log.Print(err)
@@ -88,9 +96,9 @@ func (h queueHandler) Callback(c *gin.Context) {
 					"direction": "ltr",
 					"hero": {
 					  "type": "image",
-					  "url": "https://pbs.twimg.com/media/DYY92oBVwAAJKvb.jpg",
+					  "url": "https://www.i-pic.info/i/KMdp196143.png",
 					  "size": "full",
-					  "aspectRatio": "25:13",
+					  "aspectRatio": "20:13",
 					  "aspectMode": "cover",
 					  "position": "relative"
 					},

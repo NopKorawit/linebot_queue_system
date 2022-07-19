@@ -39,6 +39,16 @@ func (s queueService) GetQueue(code string) (*model.QueueResponse, error) {
 	return &qReponse, nil
 }
 
+func (s queueService) DeleteQueuebyUID(UserID string)(error) {
+	queue, err := s.queueRepo.DeleteQueuebyUID(UserID)
+	if err != nil {
+		log.Println(err)
+		return errors.New("repository error")
+	}
+	log.Printf("%v is cancle queue", queue.Name)
+	return nil
+}
+
 // func pushmessage (userID string,message string){
 // 	bot, err := linebot.New(<channel secret>, <channel token>)
 // 	if err != nil {
