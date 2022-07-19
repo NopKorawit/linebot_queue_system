@@ -27,5 +27,5 @@ func main() {
 	route.POST("/callback", queueHandler.Callback)
 
 	//Run Server
-	route.Run(":5000")
+	route.Run()
 }
