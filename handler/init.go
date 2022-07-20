@@ -25,7 +25,8 @@ func ConnectDatabase() (db *gorm.DB) {
 	// 	viper.GetString("db.database"),
 
 	// )
-	dsn := os.Getenv("JAWSDB_DSN")
+	dsnHeroku := os.Getenv("JAWSDB_DSN")
+	dsn := fmt.Sprintf("%v?%v", dsnHeroku, "&parseTime=True&loc=Local")
 	dial := mysql.Open(dsn)
 
 	database, err := gorm.Open(dial, &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
