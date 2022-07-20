@@ -6,6 +6,6 @@ import (
 
 //port
 type QueueService interface {
-	GetQueue(Code string) (*model.QueueResponse, error)
+	GetQueue(Code string) (*model.QueueResponseLine, error)
 	DeleteQueuebyUID(UserID string) error
 }

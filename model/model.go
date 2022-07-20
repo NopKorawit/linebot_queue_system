@@ -11,7 +11,7 @@ type QueueModel struct {
 	UserID string
 }
 
-type QueueResponse struct {
+type QueueResponseLine struct {
 	CurrentCode string `gorm:"size:5"`
 	UserCode    string `gorm:"size:5"`
 	QueueAmount int    `gorm:"size:5"`
@@ -19,9 +19,9 @@ type QueueResponse struct {
 	Name        string `gorm:"size:30"`
 }
 
-type QueueInput struct {
-	Type   string `gorm:"size:2"`
-	Name   string `gorm:"size:30"`
-	Tel    string `gorm:"size:16"`
-	UserID string `gorm:"size:50"`
-}
+// type QueueInput struct {
+// 	Type   string `gorm:"size:2"`
+// 	Name   string `gorm:"size:30"`
+// 	Tel    string `gorm:"size:16"`
+// 	UserID string `gorm:"size:50"`
+// }
