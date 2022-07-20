@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -16,13 +17,15 @@ import (
 func ConnectDatabase() (db *gorm.DB) {
 
 	//Set Data source name
-	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?&parseTime=True&loc=Local",
-		viper.GetString("db.user"),
-		viper.GetString("db.pass"),
-		viper.GetString("db.host"),
-		viper.GetString("db.port"),
-		viper.GetString("db.database"),
-	)
+	// dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?&parseTime=True&loc=Local",
+	// 	viper.GetString("db.user"),
+	// 	viper.GetString("db.pass"),
+	// 	viper.GetString("db.host"),
+	// 	viper.GetString("db.port"),
+	// 	viper.GetString("db.database"),
+
+	// )
+	dsn := os.Getenv("JAWSDB_DSN")
 	dial := mysql.Open(dsn)
 
 	database, err := gorm.Open(dial, &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
@@ -37,8 +40,10 @@ func ConnectDatabase() (db *gorm.DB) {
 
 func GetBot() (bot *linebot.Client) {
 	bot, err := linebot.New(
-		viper.GetString("line.CHANNEL_SECRET"),
-		viper.GetString("line.CHANNEL_TOKEN"),
+		// viper.GetString("line.CHANNEL_SECRET"),
+		// viper.GetString("line.CHANNEL_TOKEN"),
+		os.Getenv("CHANNEL_SECRET"),
+		os.Getenv("CHANNEL_TOKEN"),
 	)
 	if err != nil {
 		log.Fatal(err)
